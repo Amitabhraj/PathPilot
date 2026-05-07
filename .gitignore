@@ -1,0 +1,12 @@
+venv/
+staticfiles/
+db.sqlite3
+.env
+
+__pycache__/
+*.pyc
+
+media/temp_resumes/
+
+*.faiss
+*.pkl

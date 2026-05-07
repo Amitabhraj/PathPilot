@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Resume | CareerPilot{% endblock %}
+
+{% block extra_css %}
+<style>
+
+.page-wrapper {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* CARD */
+.upload-card {
+  width: 100%;
+  max-width: 950px;
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  border-radius: 24px;
+
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* LEFT */
+.left-section {
+  flex: 1;
+}
+
+.left-section h1 {
+  font-size: 2.5rem;
+}
+
+.left-section span {
+  color: #F5C542;
+}
+
+.left-section p {
+  color: #aaa;
+  margin: 20px 0;
+}
+
+/* RIGHT */
+.right-section {
+  flex: 1;
+}
+
+/* UPLOAD BOX */
+.upload-box {
+  position: relative;
+  border: 2px dashed #444;
+  padding: 40px 20px;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-box:hover {
+  border-color: #F5C542;
+  background: rgba(245,197,66,0.05);
+}
+
+/* HIDE INPUT BUT KEEP CLICKABLE */
+.upload-box input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.upload-content {
+  pointer-events: none;
+}
+
+.upload-title {
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.upload-sub {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.upload-sub span {
+  color: #F5C542;
+}
+
+.file-name {
+  margin-top: 12px;
+  color: #22c55e;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* FILE INPUT (IMPORTANT FIX) */
+input[type="file"] {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #444;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+/* BUTTON */
+.btn-upload {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #F5C542;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .upload-card {
+    flex-direction: column;
+  }
+}
+
+.success {
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.4);
+  padding: 12px;
+  border-radius: 10px;
+  color: #22c55e;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-wrapper">
+
+  <div class="upload-card">
+
+    <!-- LEFT -->
+    <div class="left-section">
+      <h1>Upload Your <span>Resume</span></h1>
+
+      <p>
+        Get AI-powered insights on your resume and improve your chances of landing a job.
+      </p>
+
+      <div>
+        <p>✅ ATS Score</p>
+        <p>✅ Skill Gap Detection</p>
+        <p>✅ Job Matching</p>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-section">
+
+      {% if messages %}
+        {% for message in messages %}
+            <div class="success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+      <form method="POST" enctype="multipart/form-data" action="{% url 'upload_resume' %}">
+        {% csrf_token %}
+
+        <div class="upload-box" id="uploadBox">
+  
+            <input 
+                type="file" 
+                name="current_resume" 
+                id="fileInput"
+                accept=".pdf,.doc,.docx"
+                required
+            >
+
+            <div class="upload-content">
+                
+                <p class="upload-title">Drag & Drop your resume</p>
+                <p class="upload-sub">or <span>click to browse</span></p>
+
+                <p id="fileName" class="file-name"></p>
+            </div>
+        </div>
+        <br>
+
+        <button type="submit" class="btn-upload">
+          🚀 Upload Resume
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+<script>
+    const fileInput = document.getElementById("fileInput");
+    const fileName = document.getElementById("fileName");
+
+    fileInput.addEventListener("change", function() {
+        if (this.files.length > 0) {
+            fileName.textContent = "📄 " + this.files[0].name;
+        }
+    });
+</script>
+
+</div>
+
+{% endblock %}

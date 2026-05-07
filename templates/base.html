@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{% block title %}CareerPilot{% endblock %}</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --gold:#F5C542;
+  --dark:#050816;
+  --text:#ffffff;
+  --muted:#aaa;
+}
+
+body {
+  margin:0;
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--text);
+}
+
+/* NAVBAR */
+.navbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 50px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  position:sticky;
+  top:0;
+  background:rgba(5,8,22,0.95);
+  z-index:1000;
+}
+
+.logo {
+  font-family:'Syne';
+  font-weight:800;
+  font-size:1.5rem;
+}
+
+.logo span { color:var(--gold); }
+
+/* NAV LINKS */
+.nav-links {
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.nav-btn {
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  background:none;
+  text-decoration: none;
+  color:var(--muted);
+}
+
+.nav-btn:hover {
+  color:white;
+}
+
+.primary-btn {
+  background:var(--gold);
+  color:black;
+  font-weight:600;
+}
+
+.outline-btn {
+  border:1px solid rgba(255,255,255,0.2);
+  color:white;
+}
+
+/* MOBILE MENU BUTTON */
+.menu-btn {
+  display:none;
+  font-size:1.5rem;
+  cursor:pointer;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position:fixed;
+  top:0;
+  right:-100%;
+  width:260px;
+  height:100%;
+  background:#0a0d1f;
+  padding:30px;
+  transition:0.3s;
+  z-index:2000;
+}
+
+.sidebar.active {
+  right:0;
+}
+
+.sidebar a, .sidebar button {
+  display:block;
+  margin:15px 0;
+  color:white;
+  text-decoration:none;
+  background:none;
+  border:none;
+  font-size:1rem;
+}
+
+/* OVERLAY */
+.overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:none;
+}
+
+.overlay.active {
+  display:block;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .nav-links {
+    display:none;
+  }
+
+  .menu-btn {
+    display:block;
+  }
+}
+
+</style>
+
+{% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<div class="navbar">
+
+  <div class="logo">
+    <a href="/" style="color:#ffffff; text-decoration:none;">Career</a><a href="/" style="color:#F5C542; text-decoration:none;"><span>Pilot</span></a>
+  </div>
+
+  <div class="nav-links">
+
+    <a href="/" class="nav-btn primary-btn">Home</a>
+
+    <a href="/analyze/" class="nav-btn outline-btn">Analyze Resume</a>
+    <a href="/jobs/" class="nav-btn outline-btn">Find Jobs</a>
+
+    {% if request.user.is_authenticated %}
+      <a href="{% url 'user-logout' %}" class="nav-btn">Logout</a>
+    {% else %}
+      <a href="{% url 'user-login' %}" class="nav-btn primary-btn">Login</a>
+    {% endif %}
+
+  </div>
+
+  <div class="menu-btn" onclick="openSidebar()">☰</div>
+
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+  <a href="/">Home</a>
+
+  <a href="/analyze/">Analyze Resume</a>
+  <a href="/jobs/">Find Jobs</a>
+
+  {% if request.user.is_authenticated %}
+    <a href="/logout/">Logout</a>
+  {% else %}
+    <a href="/login/">Login</a>
+  {% endif %}
+
+</div>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN CONTENT -->
+{% block content %}
+{% endblock %}
+
+<script>
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

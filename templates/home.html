@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CareerPilot — AI Career Guidance</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+body {
+  margin:0;
+  font-family: 'DM Sans', sans-serif;
+  background:#050816;
+  color:white;
+}
+
+/* NAV */
+nav {
+  display:flex;
+  justify-content:space-between;
+  padding:20px 60px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+.nav-logo {
+  font-family:'Syne';
+  font-weight:800;
+  font-size:1.5rem;
+}
+
+.nav-logo span { color:#F5C542; }
+
+.nav-right button {
+  margin-left:12px;
+  padding:8px 16px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+}
+
+.btn-ghost { background:none; color:#ccc; }
+.btn-primary { background:#F5C542; color:black; font-weight:600; }
+
+/* HERO */
+.hero {
+  padding:0px 60px;
+  max-width:1200px;
+}
+
+.hero h1 {
+  font-family:'Syne';
+  font-size:3rem;
+}
+
+.hero h1 em {
+  color:#F5C542;
+}
+
+.hero p {
+  color:#aaa;
+  max-width:500px;
+  margin:20px 0;
+}
+
+.btn-large {
+  padding:12px 24px;
+  background:#F5C542;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.btn-outline {
+  padding:12px 24px;
+  border:1px solid #444;
+  background:none;
+  color:white;
+  border-radius:10px;
+}
+
+/* FEATURES */
+.features {
+  padding:60px;
+}
+
+.features-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+}
+
+.feature-card {
+  border:1px solid rgba(255,255,255,0.1);
+  padding:20px;
+  border-radius:15px;
+}
+
+.feature-name {
+  font-family:'Syne';
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.feature-desc {
+  color:#aaa;
+}
+
+/* STEPS */
+.steps {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:60px;
+}
+
+.step {
+  text-align:center;
+}
+
+.step-num {
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+/* CTA */
+.cta {
+  text-align:center;
+  padding:80px;
+}
+
+footer {
+  text-align:center;
+  padding:20px;
+  color:#666;
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-image img {
+  width: 100%;
+  max-width: 450px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <a href="/" style="color:#ffffff; text-decoration:none;">Career</a><a href="/" style="color:#F5C542; text-decoration:none;"><span>Pilot</span></a>
+  </div>
+
+  <div class="nav-right">
+    <button class="btn-ghost">Features</button>
+    <button class="btn-ghost">How it Works</button>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'user-logout' %}"><button class="btn-danger">Logout</button></a>
+    {% else %}
+    <a href="{% url 'user-login' %}"><button class="btn-ghost">Login</button></a>
+    {% endif %}
+    <a href="{% url 'userHome' %}"><button class="btn-primary">Get Started</button></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+
+  <div class="hero-container">
+
+    <!-- LEFT TEXT -->
+    <div class="hero-text">
+      <h1>
+        Stop Guessing.<br/>
+        Start <em>Winning Jobs</em>.
+      </h1>
+
+      <p>
+        CareerPilot analyzes your resume, finds your missing skills, and gives you a clear roadmap to crack your dream job — not just random advice.
+      </p>
+
+      <button class="btn-large"><a href="{% url 'userHome' %}" style="text-decoration: none;color:rgb(0, 0, 0)" >🚀 Analyze My Resume</a></button>
+    </div>
+
+    <!-- RIGHT IMAGE -->
+    <div class="hero-image">
+      <img src="{% static 'images/login/job-animation-img.png' %}" alt="Job Animation">
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <h2>What CareerPilot Does</h2>
+
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-name">ATS-Friendly Resume</div>
+      <p class="feature-desc">
+        Create resumes tailored for each job role so you pass ATS filters and get shortlisted.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-name">Skill Gap Detection</div>
+      <p class="feature-desc">
+        Know exactly what skills you're missing and why your resume gets rejected.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-name">Personalized Roadmap</div>
+      <p class="feature-desc">
+        Step-by-step guide to reach your dream job with curated learning and projects.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-name">Smart Job Filtering</div>
+      <p class="feature-desc">
+        Apply only where you have high chances. 80%+ match = go ahead.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-name">Portfolio Builder</div>
+      <p class="feature-desc">
+        Build strong portfolios automatically using your projects.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-name">LinkedIn & GitHub Boost</div>
+      <p class="feature-desc">
+        Improve your online presence so recruiters can find you.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps">
+
+  <div class="step">
+    <div class="step-num">Step - 01</div>
+    <p>Upload Your Resume</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step - 02</div>
+    <p>AI Finds Skill Gaps Between Student & Job</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step - 03</div>
+    <p>Get Roadmap For Filling the Skills Gap</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step - 04</div>
+    <p>Apply Smartly with our Tailored ATS Friendly Resume</p>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 CareerPilot — Built for Students 🇮🇳
+</footer>
+
+</body>
+</html>
