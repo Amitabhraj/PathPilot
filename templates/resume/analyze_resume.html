@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analyze Resume | CareerPilot{% endblock %}
+
+{% block content %}
+
+<div class="analyze-wrapper">
+
+    <div class="analyze-card">
+
+        <!-- HEADER -->
+        <div class="text-center mb-4">
+            <h2 class="main-title">🚀 Resume AI Analyzer</h2>
+            <p class="subtitle">Optimize your resume for ATS & land more interviews</p>
+        </div>
+
+        <!-- FORM -->
+        <form action="{% url 'AnalyzeResume' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- FILE UPLOAD -->
+            <div class="upload-box" onclick="document.getElementById('resumeInput').click()">
+                <input type="file" name="resume_file" id="resumeInput" hidden accept=".pdf,.docx">
+                
+                <div class="upload-content">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Click or Drag & Drop your Resume</p>
+                    <small>PDF or DOCX</small>
+                </div>
+            </div>
+
+            <!-- JOB DESCRIPTION -->
+            <div class="input-group-modern mt-4">
+                <label>Target Job Description</label>
+                <textarea name="job_description" rows="4" placeholder="Paste job description here..." required></textarea>
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit" class="analyze-btn">
+                Analyze Resume ✨
+            </button>
+        </form>
+
+    </div>
+
+    {% if analysis %}
+    <!-- RESULTS -->
+    <div class="result-card">
+
+        <div class="result-header">
+            <h3>📊 Analysis Results</h3>
+        </div>
+
+        <div class="score-section">
+            <div class="score-circle">
+                {{ analysis.score }}%
+            </div>
+            <p>ATS Score</p>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="result-block">
+            <h5>Missing Skills</h5>
+            <div class="skills-container">
+                {% for skill in analysis.missing_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="result-block">
+            <h5>Improved Summary</h5>
+            <div class="result-box">
+                {{ analysis.improved_summary }}
+            </div>
+        </div>
+
+        <!-- SUGGESTIONS -->
+        <div class="result-block">
+            <h5>ATS Suggestions</h5>
+            <div class="result-box">
+                {{ analysis.ats_suggestions }}
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+
+/* BACKGROUND */
+.analyze-wrapper {
+    min-height: 100vh;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* CARD */
+.analyze-card {
+    width: 100%;
+    max-width: 700px;
+    padding: 35px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    color: white;
+}
+
+/* TITLE */
+.main-title {
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* UPLOAD BOX */
+.upload-box {
+    border: 2px dashed rgba(255,255,255,0.5);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.upload-box:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.upload-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-weight: 500;
+}
+
+/* INPUT */
+.input-group-modern label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.input-group-modern textarea {
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+/* BUTTON */
+.analyze-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(to right, #ff512f, #dd2476);
+    color: white;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.analyze-btn:hover {
+    transform: scale(1.05);
+}
+
+/* RESULT CARD */
+.result-card {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    animation: fadeUp 0.5s ease;
+}
+
+/* SCORE */
+.score-section {
+    text-align: center;
+}
+
+.score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(to right, #11998e, #38ef7d);
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+/* SKILLS */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.skill-tag {
+    background: #f1f3f6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* BOX */
+.result-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+}
+
+/* ANIMATION */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,921 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CareerPilot — AI Career Guidance{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ========================================
+   ROOT & RESET
+======================================== */
+:root {
+  --ink:       #0f0e17;
+  --ink-light: #3d3c4e;
+  --muted:     #6b6b80;
+  --rule:      rgba(15,14,23,0.09);
+  --bg:        #f7f6f2;
+  --bg-warm:   #f2f0eb;
+  --surface:   #ffffff;
+  --accent:    #4f46e5;
+  --accent-dk: #3730a3;
+  --gold:      #c9972b;
+  --gold-lt:   #f5ecd4;
+  --green:     #0a7c4e;
+  --green-lt:  #e2f4ec;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ========================================
+   HERO
+======================================== */
+.hero-section {
+  min-height: calc(100vh - 65px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* LEFT — TEXT */
+.hero-left {
+  padding: 80px 60px 80px 72px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-lt);
+  border: 1px solid rgba(201,151,43,0.3);
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+}
+
+.hero-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 4vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.hero-h1 .highlight {
+  position: relative;
+  display: inline-block;
+  color: var(--accent);
+}
+
+/* underline drawn decoration */
+.hero-h1 .highlight::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  width: 100%; height: 3px;
+  background: var(--accent);
+  border-radius: 4px;
+  transform-origin: left;
+  animation: underline-grow 0.9s 0.4s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+@keyframes underline-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.hero-p {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 440px;
+  margin-bottom: 40px;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  padding: 14px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dk);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79,70,229,0.28);
+}
+
+.btn-ghost-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--ink-light);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 14px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.btn-ghost-dark:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(79,70,229,0.04);
+}
+
+/* trust row */
+.trust-row {
+  margin-top: 52px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.trust-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--rule);
+}
+
+.trust-stat strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.trust-stat span {
+  font-size: 0.76rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* RIGHT — VISUAL */
+.hero-right {
+  position: relative;
+  height: 100%;
+  min-height: 600px;
+  overflow: hidden;
+}
+
+/* large background shape */
+.hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 50%, #eef2ff 100%);
+  clip-path: polygon(10% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.hero-img-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 50px 60px 80px;
+}
+
+.hero-img-wrap img {
+  width: 100%;
+  max-width: 420px;
+  object-fit: contain;
+  filter: drop-shadow(0 24px 48px rgba(79,70,229,0.18));
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+/* floating card decoration */
+.hero-card {
+  position: absolute;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 0.78rem;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+  animation: float 6s ease-in-out infinite;
+}
+
+.hero-card-1 {
+  top: 20%;
+  left: 8%;
+  animation-delay: -1s;
+}
+
+.hero-card-2 {
+  bottom: 22%;
+  left: 5%;
+  animation-delay: -3s;
+}
+
+.hero-card-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.hero-card-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.hero-card-value.green { color: var(--green); }
+.hero-card-bar {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.hero-card-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--green);
+}
+
+/* entry animations */
+.hero-left > * {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: fadeUp 0.7s forwards;
+}
+.hero-label     { animation-delay: 0.1s; }
+.hero-h1        { animation-delay: 0.22s; }
+.hero-p         { animation-delay: 0.34s; }
+.hero-cta-row   { animation-delay: 0.44s; }
+.trust-row      { animation-delay: 0.54s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   SECTION COMMON
+======================================== */
+.section-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.section-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.section-p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  max-width: 520px;
+}
+
+/* ========================================
+   FEATURES SECTION
+======================================== */
+.features-section {
+  padding: 120px 72px;
+  background: var(--surface);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.features-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 64px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.feature-card {
+  background: var(--surface);
+  padding: 36px 32px;
+  transition: background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  background: #fafbff;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.feature-card:hover::before { transform: scaleX(1); }
+
+.feature-num {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.feature-icon-box {
+  width: 44px; height: 44px;
+  background: rgba(79,70,229,0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.feature-icon-box svg {
+  width: 22px; height: 22px;
+  stroke: var(--accent);
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.feature-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.feature-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* ========================================
+   HOW IT WORKS
+======================================== */
+.how-section {
+  padding: 120px 72px;
+  background: var(--bg-warm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* large background number */
+.how-section::before {
+  content: 'HOW';
+  position: absolute;
+  top: 40px; right: -20px;
+  font-family: var(--font-display);
+  font-size: 16rem;
+  font-weight: 800;
+  color: rgba(15,14,23,0.025);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+.how-header { margin-bottom: 72px; }
+
+.steps-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+/* connector line */
+.steps-track::before {
+  content: '';
+  position: absolute;
+  top: 30px;
+  left: calc(12.5% + 20px);
+  right: calc(12.5% + 20px);
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--accent) 0, var(--accent) 6px,
+    transparent 6px, transparent 14px
+  );
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+  position: relative;
+}
+
+.step-circle {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.step-item:hover .step-circle {
+  background: var(--accent);
+  transform: scale(1.08);
+}
+
+.step-circle-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.step-item:hover .step-circle-num { color: #fff; }
+
+.step-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ========================================
+   CTA BAND
+======================================== */
+.cta-section {
+  padding: 100px 72px;
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* grid texture */
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.cta-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.cta-label {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 20px;
+}
+
+.cta-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.cta-h2 em {
+  font-style: normal;
+  color: #a5b4fc;
+}
+
+.cta-p {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-bottom: 40px;
+}
+
+.btn-white {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 14px 30px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255,255,255,0.15);
+}
+
+.btn-white svg {
+  width: 17px; height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s;
+}
+
+.btn-white:hover svg { transform: translateX(3px); }
+
+/* ========================================
+   FOOTER
+======================================== */
+.site-footer {
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
+  padding: 32px 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.footer-logo span { color: var(--accent); }
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 1100px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .hero-right { display: none; }
+  .hero-left { padding: 72px 32px; }
+
+  .features-section,
+  .how-section,
+  .cta-section { padding: 80px 32px; }
+
+  .features-intro { grid-template-columns: 1fr; }
+
+  .steps-track {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .steps-track::before { display: none; }
+
+  .site-footer { padding: 28px 32px; }
+}
+
+@media (max-width: 600px) {
+  .hero-left { padding: 52px 24px; }
+  .features-section,
+  .how-section,
+  .cta-section { padding: 64px 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .steps-track { grid-template-columns: 1fr; }
+  .site-footer { padding: 24px; flex-direction: column; align-items: flex-start; }
+}
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ==================== HERO ==================== -->
+<section class="hero-section">
+
+  <div class="hero-left">
+
+    <div class="hero-label">AI-Powered Career Intelligence</div>
+
+    <h1 class="hero-h1">
+      Stop Guessing.<br>
+      Start <span class="highlight">Winning Jobs</span>.
+    </h1>
+
+    <p class="hero-p">
+      CareerPilot analyzes your resume, identifies your skill gaps, and delivers a precise roadmap to the roles you actually want — not generic advice.
+    </p>
+
+    <div class="hero-cta-row">
+      <a href="{% url 'userHome' %}" class="btn-primary">
+        Analyze My Resume
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a href="#features" class="btn-ghost-dark">See How It Works</a>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-stat">
+        <strong>4 x</strong>
+        <span>Faster Shortlisting</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat">
+        <strong>ATS</strong>
+        <span>Score Optimised</span>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat">
+        <strong>100%</strong>
+        <span>Free to Start</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hero-right">
+
+    <div class="hero-img-wrap">
+      <img src="{% static 'images/login/job-animation-img.png' %}" alt="CareerPilot Dashboard Preview">
+    </div>
+
+    <!-- floating ATS score card -->
+    <div class="hero-card hero-card-1">
+      <div class="hero-card-label">ATS Score</div>
+      <div class="hero-card-value green">87 / 100</div>
+      <div class="hero-card-bar">
+        <div class="hero-card-bar-fill" style="width:87%"></div>
+      </div>
+    </div>
+
+    <!-- floating match card -->
+    <div class="hero-card hero-card-2">
+      <div class="hero-card-label">Job Match</div>
+      <div class="hero-card-value" style="color:var(--accent)">94% Match</div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ==================== FEATURES ==================== -->
+<section class="features-section" id="features">
+
+  <div class="features-intro">
+    <div>
+      <span class="section-label">Platform Capabilities</span>
+      <h2 class="section-h2">Everything you need to<br>land your dream role</h2>
+    </div>
+    <p class="section-p">
+      From resume parsing to smart job filtering — CareerPilot gives students a complete, data-driven edge at every stage of the hiring journey.
+    </p>
+  </div>
+
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-num">01</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+      </div>
+      <div class="feature-name">ATS-Friendly Resume</div>
+      <p class="feature-desc">Generate tailored resumes that pass automated screening systems and reach human reviewers consistently.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-num">02</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <div class="feature-name">Skill Gap Detection</div>
+      <p class="feature-desc">Pinpoint exactly which skills are holding you back and receive targeted recommendations to fill the gap.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-num">03</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="feature-name">Personalised Roadmap</div>
+      <p class="feature-desc">A step-by-step learning plan with curated courses and projects aligned to your specific target role.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-num">04</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div class="feature-name">Smart Job Filtering</div>
+      <p class="feature-desc">Apply where you have a real chance. CareerPilot highlights roles where your profile exceeds 80% match threshold.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-num">05</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="feature-name">Portfolio Builder</div>
+      <p class="feature-desc">Transform your existing projects into a compelling, recruiter-ready portfolio in minutes.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-num">06</div>
+      <div class="feature-icon-box">
+        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </div>
+      <div class="feature-name">LinkedIn &amp; GitHub Boost</div>
+      <p class="feature-desc">Concrete, role-specific improvements so recruiters actively discover and reach out to you.</p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="how-section" id="how">
+
+  <div class="how-header">
+    <span class="section-label">Process</span>
+    <h2 class="section-h2">From resume to offer<br>in four steps</h2>
+  </div>
+
+  <div class="steps-track">
+
+    <div class="step-item">
+      <div class="step-circle"><span class="step-circle-num">01</span></div>
+      <div class="step-title">Upload Resume</div>
+      <p class="step-desc">Drop your current resume — PDF or Word — and let our parser extract everything in seconds.</p>
+    </div>
+
+    <div class="step-item">
+      <div class="step-circle"><span class="step-circle-num">02</span></div>
+      <div class="step-title">AI Gap Analysis</div>
+      <p class="step-desc">Our models compare your profile against hundreds of live job descriptions to find exact mismatches.</p>
+    </div>
+
+    <div class="step-item">
+      <div class="step-circle"><span class="step-circle-num">03</span></div>
+      <div class="step-title">Get Your Roadmap</div>
+      <p class="step-desc">Receive a prioritised skill-building plan with resources so you close gaps efficiently.</p>
+    </div>
+
+    <div class="step-item">
+      <div class="step-circle"><span class="step-circle-num">04</span></div>
+      <div class="step-title">Apply Smartly</div>
+      <p class="step-desc">Use your new ATS-optimised resume on matched roles and track every application in one place.</p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ==================== CTA ==================== -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <span class="cta-label">Get Started Today</span>
+    <h2 class="cta-h2">Your next role is<br><em>one upload away</em>.</h2>
+    <p class="cta-p">
+      Join students who have used CareerPilot to turn rejections into offers. It is free, fast, and built specifically for you.
+    </p>
+    <a href="{% url 'userHome' %}" class="btn-white">
+      Start for Free
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="site-footer">
+  <a href="/" class="footer-logo">Career<span>Pilot</span></a>
+  <span class="footer-copy">© 2026 CareerPilot — Built for Students in India</span>
+</footer>
+
+{% endblock %}

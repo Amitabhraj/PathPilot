@@ -1,0 +1,21 @@
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.5; }
+        .header { text-align: center; border-bottom: 1px solid #000; }
+        .section { margin-top: 15px; font-weight: bold; font-size: 18px; }
+        .content { font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ resume.name }}</h1>
+        <p>Email: {{ resume.email }} | LinkedIn: {{ resume.linkedin }}</p>
+    </div>
+    <div class="section">PROFESSIONAL SUMMARY</div>
+    <div class="content">{{ resume.ai_generated_summary }}</div>
+    
+    <div class="section">SKILLS</div>
+    <div class="content">{{ resume.ai_matched_skills }}</div>
+</body>
+</html>

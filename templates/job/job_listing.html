@@ -1,0 +1,782 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Explore Jobs | CareerPilot{% endblock %}
+
+{% block extra_css %}
+<style>
+
+:root{
+  --bg:#f5f6fa;
+  --surface:#ffffff;
+  --surface2:#f0f2f8;
+  --border:rgba(0,0,0,0.08);
+  --text:#1a1a2e;
+  --muted:#6b7280;
+  --accent:#4f46e5;
+  --accent2:#6366f1;
+  --green:#059669;
+  --red:#dc2626;
+  --radius:16px;
+  --radius-sm:12px;
+  --font-head:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+}
+
+/* ── HERO ── */
+
+.hero{
+  background:white;
+  padding:2.5rem;
+  border-bottom:1px solid var(--border);
+}
+
+.hero h1{
+  font-size:2.2rem;
+  font-family:var(--font-head);
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.hero h1 span{ color:var(--accent); }
+
+.hero p{ color:var(--muted); margin-bottom:1.5rem; }
+
+.search-row{ display:flex; gap:12px; }
+
+.search-wrap{ position:relative; flex:1; }
+
+.search-wrap input{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  padding:14px 14px 14px 45px;
+  border-radius:var(--radius-sm);
+  outline:none;
+  font-family:var(--font-body);
+  font-size:0.9rem;
+}
+
+.search-wrap input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,70,229,0.1);
+}
+
+.search-wrap svg{
+  position:absolute;
+  left:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+}
+
+.search-btn{
+  border:none;
+  background:var(--accent);
+  color:white;
+  padding:0 28px;
+  border-radius:var(--radius-sm);
+  font-weight:700;
+  font-family:var(--font-body);
+  cursor:pointer;
+  transition:background 0.2s;
+}
+
+.search-btn:hover{ background:var(--accent2); }
+
+/* ── LAYOUT ── */
+
+.main-layout{
+  display:grid;
+  grid-template-columns:1fr 560px;
+  min-height:calc(100vh - 120px);
+}
+
+.job-area{ padding:1.5rem; }
+
+.job-list{ display:flex; flex-direction:column; gap:14px; }
+
+.job-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.2rem;
+  cursor:pointer;
+  transition:transform 0.18s, box-shadow 0.18s;
+}
+
+.job-card:hover{ transform:translateY(-2px); box-shadow:0 4px 20px rgba(0,0,0,0.06); }
+
+.job-card.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,70,229,0.1);
+}
+
+.card-top{ display:flex; gap:14px; }
+
+.company-logo{
+  width:54px;
+  height:54px;
+  border-radius:14px;
+  background:var(--surface2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  flex-shrink:0;
+}
+
+.card-info h3{
+  font-family:var(--font-head);
+  font-size:1rem;
+  margin-bottom:5px;
+}
+
+.company{ color:var(--muted); font-size:0.84rem; }
+
+.card-desc{
+  margin:1rem 0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:0.84rem;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.skill-tags{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:1rem; }
+
+.skill{
+  background:var(--surface2);
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:0.73rem;
+  font-weight:500;
+}
+
+/* ── FIX 1: Card footer ── */
+
+.card-footer{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.salary{
+  color:var(--green);
+  font-weight:700;
+  flex:1;
+  font-size:0.88rem;
+}
+
+.apply-link{
+  background:var(--accent);
+  color:white;
+  padding:8px 16px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.78rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:background 0.18s, transform 0.15s;
+}
+
+.apply-link:hover{ background:var(--accent2); transform:translateY(-1px); }
+
+.download-link{
+  background:transparent;
+  color:var(--accent);
+  border:1.5px solid var(--accent);
+  padding:7px 14px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:0.78rem;
+  font-weight:700;
+  white-space:nowrap;
+  transition:background 0.18s, color 0.18s, transform 0.15s;
+}
+
+.download-link:hover{
+  background:var(--accent);
+  color:white;
+  transform:translateY(-1px);
+}
+
+/* ── RIGHT PANEL ── */
+
+.right-panel{
+  background:white;
+  border-left:1px solid var(--border);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+}
+
+.panel-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:white;
+  border-bottom:1px solid var(--border);
+  padding:1.3rem;
+}
+
+.panel-header h2{
+  font-family:var(--font-head);
+  margin-bottom:5px;
+  font-size:1.05rem;
+}
+
+.panel-header p{ color:var(--muted); font-size:0.83rem; }
+
+.panel-switch-3{ display:flex; gap:8px; margin-top:1rem; }
+
+.sw-btn{
+  flex:1;
+  border:none;
+  background:var(--surface2);
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:0.74rem;
+  font-weight:700;
+  font-family:var(--font-body);
+  transition:background 0.2s, color 0.2s;
+}
+
+.sw-btn.active{ background:var(--accent); color:white; }
+
+.panel-body{ padding:1.3rem; }
+
+.empty{ text-align:center; padding-top:4rem; color:var(--muted); }
+
+.empty-icon{ font-size:3rem; margin-bottom:12px; }
+
+/* ── JOB DETAIL ── */
+
+.jd-logo{
+  width:60px; height:60px; border-radius:14px;
+  background:var(--surface2); display:flex;
+  align-items:center; justify-content:center;
+  font-size:28px; margin-bottom:1rem;
+}
+
+.jd-title{ font-size:1.2rem; font-family:var(--font-head); font-weight:800; }
+
+.jd-company{ color:var(--muted); margin:10px 0 1rem; font-size:0.88rem; }
+
+.jd-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1rem; }
+
+.jd-box{ background:var(--surface2); padding:12px; border-radius:12px; }
+
+.jd-box small{ color:var(--muted); font-size:0.75rem; }
+
+.section-title{
+  margin:1rem 0 0.7rem;
+  font-size:0.75rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.desc{ line-height:1.7; color:var(--muted); font-size:0.84rem; }
+
+.apply-big{
+  width:100%; margin-top:1rem; border:none;
+  background:var(--accent); color:white;
+  padding:13px; border-radius:12px; font-weight:700;
+  font-family:var(--font-body); cursor:pointer;
+  transition:background 0.2s;
+}
+
+.apply-big:hover{ background:var(--accent2); }
+
+/* ── FIX 2: AI box — tighter spacing, no lag ── */
+
+.ai-wrapper{ position:relative; }
+
+.ai-box{
+  background:#fafafa;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:1rem;
+  min-height:360px;
+  max-height:66vh;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+}
+
+.ai-box-title{
+  font-weight:800;
+  color:var(--accent);
+  margin-bottom:0.8rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  position:sticky;
+  top:0;
+  background:#fafafa;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+  z-index:10;
+  font-size:0.9rem;
+}
+
+.stream-output{
+  font-size:0.875rem;
+  line-height:1.55;       /* was 1.9 */
+  color:#374151;
+  overflow-wrap:break-word;
+}
+
+.ai-section{ margin-bottom:0.9rem; animation:fadeIn 0.25s ease; }
+
+.ai-heading{
+  font-size:0.9rem; font-weight:800;
+  color:#111827; margin-bottom:0.5rem;
+  padding-bottom:6px; border-bottom:1px solid rgba(0,0,0,0.07);
+}
+
+.ai-bullet{
+  background:#f3f4f6;
+  border:1px solid rgba(0,0,0,0.05);
+  padding:9px 11px;       /* was 12px */
+  border-radius:10px;
+  margin-bottom:6px;      /* was 10px */
+  display:flex; gap:9px; align-items:flex-start;
+}
+
+.ai-bullet-number{
+  min-width:22px; height:22px; border-radius:999px;
+  background:var(--accent); color:white;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.68rem; font-weight:700; margin-top:2px; flex-shrink:0;
+}
+
+.ai-bullet-content{
+  flex:1; font-size:0.855rem; line-height:1.5; color:#374151;
+}
+
+.ai-highlight{ color:var(--accent); font-weight:700; }
+
+/* ── FIX 3: Practice resource links ── */
+
+.ai-resources{
+  margin-top:1rem;
+  padding-top:0.8rem;
+  border-top:1px solid var(--border);
+  animation:fadeIn 0.3s ease;
+}
+
+.ai-resources-title{
+  font-size:0.78rem; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.05em;
+  margin-bottom:0.55rem; font-weight:700;
+}
+
+.resource-link{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:10px;
+  border:1px solid var(--border); background:white;
+  text-decoration:none; color:var(--text);
+  font-size:0.82rem; font-weight:600; margin-bottom:7px;
+  transition:border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+}
+
+.resource-link:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,70,229,0.08);
+  transform:translateY(-1px);
+}
+
+.resource-link .rl-icon{ font-size:1.1rem; flex-shrink:0; }
+
+.resource-link .rl-body{ flex:1; }
+
+.resource-link .rl-name{ font-weight:700; display:block; margin-bottom:1px; }
+
+.resource-link .rl-desc{ color:var(--muted); font-size:0.75rem; font-weight:400; }
+
+.resource-link .rl-arrow{ color:var(--muted); font-size:0.85rem; }
+
+/* ── LOADER ── */
+
+.panel-loader{
+  position:absolute; inset:0;
+  background:rgba(255,255,255,0.8);
+  backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:50; border-radius:16px;
+}
+
+.loader-spinner{
+  width:44px; height:44px;
+  border:3.5px solid rgba(79,70,229,0.15);
+  border-top:3.5px solid var(--accent);
+  border-radius:50%;
+  animation:spin 0.75s linear infinite;
+  margin:auto;
+}
+
+.loader-text{
+  margin-top:10px; color:var(--accent);
+  font-weight:700; font-size:0.82rem; text-align:center;
+}
+
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+@keyframes fadeIn{
+  from{ opacity:0; transform:translateY(6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+@media(max-width:1050px){
+  .main-layout{ grid-template-columns:1fr; }
+  .right-panel{ display:none; }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+  <h1>Explore <span id="heroCount">0</span> open positions</h1>
+
+  <p>Discover jobs tailored to your skills and career goals.</p>
+
+  <div class="search-row">
+
+    <div class="search-wrap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search jobs, companies, locations…" oninput="filterJobs()">
+    </div>
+
+    <button class="search-btn">Search</button>
+
+  </div>
+
+</section>
+
+<div class="main-layout">
+
+  <section class="job-area">
+    <div style="margin-bottom:1rem;font-size:0.88rem;color:var(--muted);">
+      Showing <strong id="jobCount" style="color:var(--text);">0</strong> jobs
+    </div>
+    <div class="job-list" id="jobList"></div>
+  </section>
+
+  <aside class="right-panel">
+
+    <div class="panel-header">
+      <h2 id="panelTitle">Job Details</h2>
+      <p id="panelSubtitle">Select a job to get started</p>
+      <div class="panel-switch-3">
+        <button class="sw-btn active" id="sw-details"   onclick="switchPanel('details')">📋 Details</button>
+        <button class="sw-btn"        id="sw-analyzer"  onclick="switchPanel('analyzer')">🤖 Skill Gap</button>
+        <button class="sw-btn"        id="sw-questions" onclick="switchPanel('questions')">❓ Questions</button>
+      </div>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- DETAILS -->
+      <div id="detailsPanel">
+        <div class="empty" id="emptyState">
+          <div class="empty-icon">🧭</div>
+          <p>Select a job card to view details</p>
+        </div>
+        <div id="jobDetails" style="display:none;"></div>
+      </div>
+
+      <!-- ANALYZER -->
+      <div id="analyzerPanel" style="display:none;">
+        <div class="empty" id="analyzerEmpty">
+          <div class="empty-icon">🤖</div><p>Select a job first</p>
+        </div>
+        <div id="analyzerContent" style="display:none;">
+          <div class="ai-wrapper">
+            <div class="panel-loader" id="analyzerLoader" style="display:none;">
+              <div><div class="loader-spinner"></div><div class="loader-text">AI is analyzing…</div></div>
+            </div>
+            <div class="ai-box" id="analyzerBox">
+              <div class="ai-box-title">✨ AI Skill Gap Analysis</div>
+              <div class="stream-output" id="analyzerStream">Ready to analyze…</div>
+            </div>
+          </div>
+          <button class="apply-big" onclick="runAnalyzer()">▶ Run Analysis</button>
+        </div>
+      </div>
+
+      <!-- QUESTIONS -->
+      <div id="questionsPanel" style="display:none;">
+        <div class="empty" id="questionsEmpty">
+          <div class="empty-icon">❓</div><p>Select a job first</p>
+        </div>
+        <div id="questionsContent" style="display:none;">
+          <div class="ai-wrapper">
+            <div class="panel-loader" id="questionsLoader" style="display:none;">
+              <div><div class="loader-spinner"></div><div class="loader-text">Generating questions…</div></div>
+            </div>
+            <div class="ai-box" id="questionsBox">
+              <div class="ai-box-title">💡 Interview Questions</div>
+              <div class="stream-output" id="questionsStream">Ready to generate…</div>
+            </div>
+          </div>
+          <!-- FIX 3: resource links injected here after stream finishes -->
+          <div id="questionsResources" style="display:none;"></div>
+          <button class="apply-big" onclick="runQuestions()">▶ Generate Questions</button>
+        </div>
+      </div>
+
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+
+/* ── FORMAT AI TEXT ── */
+
+function formatAIText(text){
+  let html = text;
+  html = html.replace(/\*\*(.*?)\*\*/g,
+    `<div class="ai-section"><div class="ai-heading">$1</div></div>`
+  );
+  let counter = 1;
+  html = html.replace(/^\*\s(.+)$/gm, (_, content) =>
+    `<div class="ai-bullet">
+       <div class="ai-bullet-number">${counter++}</div>
+       <div class="ai-bullet-content">${content}</div>
+     </div>`
+  );
+  html = html.replace(/(\d+%)/g, `<span class="ai-highlight">$1</span>`);
+  return html;
+}
+
+/* ── SKILLS ── */
+
+function extractSkills(text){
+  const list = ["Python","Django","React","AWS","Docker","Node.js","MongoDB","SQL","JavaScript","Java"];
+  const found = list.filter(s => text.toLowerCase().includes(s.toLowerCase()));
+  return found.length ? found : ["General"];
+}
+
+/* ── JOB DATA ── */
+
+const JOBS = [
+{% for row in jobs %}
+{
+  id: {{ forloop.counter }},
+  emoji: "💼",
+  title:       `{{ row.title|default:''|escapejs }}`,
+  company:     `{{ row.company|default:''|escapejs }}`,
+  location:    `{{ row.location|default:'Remote'|escapejs }}`,
+  salary:      `{{ row.salary|default:'Not Disclosed'|escapejs }}`,
+  posted:      `{{ row.date_posted|default:'Recently Posted'|escapejs }}`,
+  description: `{{ row.description|default:''|truncatechars:600|escapejs }}`,
+  skills:      extractSkills(`{{ row.description|default:''|escapejs }}`),
+  apply_url:   `{{ row.job_url|default:'#'|escapejs }}`
+},
+{% endfor %}
+];
+
+let selectedJobId = null;
+
+/* ── RENDER ── */
+
+function renderJobs(data){
+  document.getElementById("jobCount").textContent  = data.length;
+  document.getElementById("heroCount").textContent = data.length;
+  document.getElementById("jobList").innerHTML = data.map(job => `
+    <div class="job-card ${selectedJobId === job.id ? 'selected' : ''}" onclick="selectJob(${job.id})">
+      <div class="card-top">
+        <div class="company-logo">${job.emoji}</div>
+        <div class="card-info">
+          <h3>${job.title}</h3>
+          <div class="company">${job.company} · ${job.location}</div>
+        </div>
+      </div>
+      <div class="card-desc">${job.description}</div>
+      <div class="skill-tags">
+        ${job.skills.map(s => `<span class="skill">${s}</span>`).join('')}
+      </div>
+      <div class="card-footer">
+        <div class="salary">${job.salary}</div>
+        <a href="${job.apply_url}" target="_blank" class="apply-link" onclick="event.stopPropagation()">Apply Now</a>
+        <a href="#" class="download-link" onclick="event.stopPropagation()">⬇ Resume</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── SELECT JOB ── */
+
+function selectJob(id){
+  selectedJobId = id;
+  renderJobs(getFilteredJobs());
+  const job = JOBS.find(j => j.id === id);
+  document.getElementById("panelTitle").textContent    = job.title;
+  document.getElementById("panelSubtitle").textContent = job.company;
+  document.getElementById("emptyState").style.display  = "none";
+  const detail = document.getElementById("jobDetails");
+  detail.style.display = "block";
+  detail.innerHTML = `
+    <div class="jd-logo">${job.emoji}</div>
+    <div class="jd-title">${job.title}</div>
+    <div class="jd-company">${job.company} · ${job.location}</div>
+    <div class="jd-grid">
+      <div class="jd-box"><small>Salary</small><br><strong>${job.salary}</strong></div>
+      <div class="jd-box"><small>Posted</small><br><strong>${job.posted}</strong></div>
+    </div>
+    <div class="section-title">Description</div>
+    <div class="desc">${job.description}</div>
+    <a href="${job.apply_url}" target="_blank"
+       class="apply-big"
+       style="display:block;text-align:center;text-decoration:none;margin-top:1rem;">
+      Apply for this Position →
+    </a>
+  `;
+  switchPanel("details");
+  /* reset AI panels for new job */
+  document.getElementById("analyzerStream").innerHTML  = "Ready to analyze…";
+  document.getElementById("questionsStream").innerHTML = "Ready to generate…";
+  document.getElementById("questionsResources").style.display = "none";
+}
+
+/* ── SWITCH PANEL ── */
+
+function switchPanel(mode){
+  ["details","analyzer","questions"].forEach(m => {
+    const panel = document.getElementById(m + "Panel");
+    if(panel) panel.style.display = m === mode ? "block" : "none";
+    document.getElementById("sw-" + m).classList.toggle("active", m === mode);
+  });
+  if(mode !== "details"){
+    const has = selectedJobId !== null;
+    document.getElementById(mode + "Empty").style.display   = has ? "none"  : "block";
+    document.getElementById(mode + "Content").style.display = has ? "block" : "none";
+  }
+}
+
+/* ── FIX 2: THROTTLED STREAM ── */
+
+async function streamAIResponse(endpoint, outputId, loaderId, boxId, onComplete){
+  if(!selectedJobId) return;
+  const job    = JOBS.find(j => j.id === selectedJobId);
+  const loader = document.getElementById(loaderId);
+  const output = document.getElementById(outputId);
+  const box    = document.getElementById(boxId);
+  loader.style.display = "flex";
+  output.innerHTML     = "";
+  let rawText = "", firstChunk = false, renderTimer = null;
+
+  function scheduleRender(){
+    if(renderTimer) return;
+    renderTimer = setTimeout(() => {
+      renderTimer = null;
+      output.innerHTML = formatAIText(rawText);
+      if(box.scrollHeight - box.scrollTop - box.clientHeight < 140)
+        box.scrollTop = box.scrollHeight;
+    }, 60);
+  }
+
+  try{
+    const res = await fetch(
+      `${endpoint}?title=${encodeURIComponent(job.title)}&company=${encodeURIComponent(job.company)}`
+    );
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      rawText += decoder.decode(value, { stream:true });
+      if(!firstChunk && rawText.trim().length > 0){
+        loader.style.display = "none";
+        firstChunk = true;
+      }
+      scheduleRender();
+    }
+    if(renderTimer){ clearTimeout(renderTimer); renderTimer = null; }
+    output.innerHTML = formatAIText(rawText);
+    box.scrollTop    = box.scrollHeight;
+    if(onComplete) onComplete();
+  }catch(err){
+    loader.style.display = "none";
+    output.innerHTML = `<span style="color:var(--red);">Failed to connect to AI. Please try again.</span>`;
+  }
+}
+
+/* ── FIX 3: RESOURCE LINKS ── */
+
+const PRACTICE_RESOURCES = [
+  { icon:"💻", name:"LeetCode",                  desc:"Practice coding & data structure questions",   url:"https://leetcode.com/interview/" },
+  { icon:"🪟", name:"Glassdoor Interview Qs",    desc:"Real questions shared by candidates",          url:"https://www.glassdoor.com/Interview/index.htm" },
+  { icon:"🎙️", name:"Pramp",                      desc:"Free mock interviews with peers",              url:"https://www.pramp.com/" },
+  { icon:"📚", name:"interviewing.io",            desc:"Anonymous technical mock interviews",          url:"https://interviewing.io/" }
+];
+
+function injectQuestionResources(){
+  const container = document.getElementById("questionsResources");
+  container.innerHTML = `
+    <div class="ai-resources">
+      <div class="ai-resources-title">🔗 Practice Resources</div>
+      ${PRACTICE_RESOURCES.map(r => `
+        <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="resource-link">
+          <span class="rl-icon">${r.icon}</span>
+          <span class="rl-body">
+            <span class="rl-name">${r.name}</span>
+            <span class="rl-desc">${r.desc}</span>
+          </span>
+          <span class="rl-arrow">↗</span>
+        </a>
+      `).join('')}
+    </div>
+  `;
+  container.style.display = "block";
+}
+
+/* ── RUNNERS ── */
+function runAnalyzer(){
+  streamAIResponse("{% url 'analyze_job_stream' %}","analyzerStream","analyzerLoader","analyzerBox");
+}
+
+function runQuestions(){
+  document.getElementById("questionsResources").style.display = "none";
+  streamAIResponse("{% url 'analyze_question_stream' %}","questionsStream","questionsLoader","questionsBox", injectQuestionResources);
+}
+
+/* ── FILTER ── */
+
+function getFilteredJobs(){
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  return JOBS.filter(j =>
+    j.title.toLowerCase().includes(q) ||
+    j.company.toLowerCase().includes(q) ||
+    j.location.toLowerCase().includes(q)
+  );
+}
+
+function filterJobs(){ renderJobs(getFilteredJobs()); }
+
+renderJobs(JOBS);
+
+</script>
+
+{% endblock %}
